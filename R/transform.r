@@ -1,7 +1,7 @@
 hdd_json_to_csv <- function(hdd_json, out_csv) {
 
   tryCatch({  
-    js <- fromJSON(hdd_file, simplifyDataFrame = F)
+    js <- fromJSON(hdd_json, simplifyDataFrame = F)
   
     df <- map_dfr(names(js), function(fips){
       baseline <- js[[fips]]$modeled_baseline
