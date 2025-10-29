@@ -33,8 +33,23 @@ download_and_save_degree_days(
   summarized = T
 )
 
+
+# debug
+download_and_save_degree_days(
+  coordinates_file = 'data/aedg/debug.geojson', 
+  out_file = 'data/snap/heating_degree_days.json', 
+  base_url = 'https://earthmaps.io/degree_days/heating',
+  start_year = '2000', 
+  end_year = '2030',
+  summarized = F
+)
+
+
+
+
 # convert json output to csv
 hdd_json_to_csv(
   hdd_json = 'data/snap/heating_degree_days.json',
   out_csv = 'data/snap/heating_degree_days.csv')
-  
+
+
