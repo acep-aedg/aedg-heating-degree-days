@@ -7,7 +7,7 @@ library(tidyverse)
 
 source(file = 'R/extract.r')
 source(file = 'R/preprocess.r')
-# source(file = 'R/transform.r')
+source(file = 'R/transform.r')
 
 snap_hdd_url <- "http://data.snap.uaf.edu/data/Base/AK_WRF/Arctic_EDS_degree_days/heating_degree_days.zip" 
 aedg_communities_url <- "https://github.com/acep-aedg/aedg-data-pond/raw/refs/heads/main/data/final/communities.geojson"
@@ -33,8 +33,8 @@ download_and_save_degree_days(
   summarized = T
 )
 
-# # convert json output to csv
-# hdd_json_to_csv(
-#   hdd_json = 'data/snap/heating_degree_days.json',
-#   out_csv = 'data/snap/heating_degree_days.csv')
+# convert json output to csv
+hdd_json_to_csv(
+  hdd_json = 'data/snap/heating_degree_days.json',
+  out_csv = 'data/snap/heating_degree_days.csv')
   
