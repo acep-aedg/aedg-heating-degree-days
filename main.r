@@ -1,12 +1,13 @@
 library(sf)
-library(httr)
+library(httr2)
 library(crayon)
 library(jsonlite)
 library(tidyverse)
 
 
-source(file = 'R/extract.r')
-source(file = 'R/preprocess.r')
+source(file = 'R/download_file.r')
+source(file = 'R/subset_fips_and_coords.r')
+source(file = 'R/download_daymet.r')
 # source(file = 'R/transform.r')
 
 snap_hdd_url <- "http://data.snap.uaf.edu/data/Base/AK_WRF/Arctic_EDS_degree_days/heating_degree_days.zip" 
@@ -23,15 +24,16 @@ subset_fips_and_coords(
   'data/aedg/communities.geojson', 
   'data/aedg/communities_coordinates.geojson')
 
-# pull HDD data for all AEDG communities
-download_and_save_degree_days(
-  coordinates_file = 'data/aedg/communities_coordinates.geojson', 
-  out_file = 'data/snap/heating_degree_days.json', 
-  base_url = 'https://earthmaps.io/degree_days/heating',
-  start_year = '1980', 
-  end_year = '2017',
-  summarized = T
+download_daymet(
+  coordinates_file = 'data/aedg/debug.geojson',
+  out_file = 'data/daymet/debug.csv',
+  base_url = 'https://daymet.ornl.gov/single-pixel/api/data',
+  vars = "tmax,tmin",
+  start_date = "2020-01-01",
+  end_date = "2024-12-31",
+  skip_header = 6  
 )
+
 
 # # convert json output to csv
 # hdd_json_to_csv(
