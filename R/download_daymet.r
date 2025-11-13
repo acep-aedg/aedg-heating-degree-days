@@ -40,7 +40,9 @@ download_daymet <- function(
       )
 
       if (!is.null(data)) {
-        data <- data |> mutate(fips_code = fips_code, lat = lat, lon = lon)
+        data <- data |> 
+          mutate(community_fips_code = fips_code) |>
+          relocate(community_fips_code, .before = 1)
       }
 
       results[[i]] <- data
