@@ -1,6 +1,4 @@
 *.zip
 *.tif
 
-data/
-
 .DS_Store

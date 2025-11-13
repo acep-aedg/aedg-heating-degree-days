@@ -24,18 +24,18 @@ subset_fips_and_coords(
   'data/aedg/communities.geojson', 
   'data/aedg/communities_coordinates.geojson')
 
-# this takes a while
+# this takes a while, ~ 1 minute per year of data
 download_daymet(
-  coordinates_file = 'data/aedg/debug.geojson',
-  out_file = 'data/daymet/l0/debug.csv',
+  coordinates_file = 'data/aedg/communities_coordinates.geojson',
+  out_file = 'data/daymet/l0/l0_daily_temps.csv',
   base_url = 'https://daymet.ornl.gov/single-pixel/api/data',
   vars = "tmax,tmin",
-  start_date = "2020-01-01",
+  start_date = "2017-01-01",
   end_date = "2024-12-31",
   skip_header = 6  
 )
 
 calculate_hdd(
-  input_data = 'data/daymet/l0/debug.csv',
-  output_data = 'data/daymet/l1/debug.csv',
+  input_data = 'data/daymet/l0/l0_daily_temps.csv',
+  output_data = 'data/daymet/l1/l1_heating_degree_days.csv',
 )
