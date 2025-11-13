@@ -16,41 +16,48 @@ download_daymet <- function(
   results <- vector("list", n)
 
   for (i in seq_len(n)) {
-    fips_code <- sf_data$fips_code[i]
-    message(sprintf("[%d/%d] Downloading data for FIPS: %s", i, n, fips_code))
+    tryCatch({
+      fips_code <- sf_data$fips_code[i]
+      message(sprintf("[%d/%d] Downloading data for FIPS: %s", i, n, fips_code))
 
-    coords <- st_coordinates(sf_data[i, ])
-    lon <- coords[1]
-    lat <- coords[2]
+      coords <- st_coordinates(sf_data[i, ])
+      lon <- coords[1]
+      lat <- coords[2]
 
-    req <- request(base_url) |>
-      req_url_query(lat = lat, lon = lon, vars = vars, start = start_date, end = end_date)
+      req <- request(base_url) |>
+        req_url_query(lat = lat, lon = lon, vars = vars, start = start_date, end = end_date)
 
-    resp <- req_perform(req)
+      resp <- req_perform(req)
 
-    if (resp_status(resp) == 200) {
-      csv_text <- resp_body_string(resp)
+      if (resp_status(resp) == 200) {
+        csv_text <- resp_body_string(resp)
 
-      data <- tryCatch(
-        read_csv(I(csv_text), skip = skip_header, show_col_types = FALSE),
-        error = function(e) {
-          warning(sprintf("Failed to parse CSV for FIPS %s: %s", fips_code, e$message))
-          NULL
+        data <- tryCatch(
+          read_csv(I(csv_text), skip = skip_header, show_col_types = FALSE),
+          error = function(e) {
+            warning(sprintf("Failed to parse CSV for FIPS %s: %s", fips_code, e$message))
+            NULL
+          }
+        )
+
+        if (!is.null(data)) {
+          data <- data |> 
+            mutate(community_fips_code = fips_code) |>
+            relocate(community_fips_code, .before = 1)
         }
-      )
 
-      if (!is.null(data)) {
-        data <- data |> 
-          mutate(community_fips_code = fips_code) |>
-          relocate(community_fips_code, .before = 1)
+        results[[i]] <- data
+      } else {
+        warning(sprintf("Request failed for FIPS %s (HTTP %d)", fips_code, resp_status(resp)))
+        results[[i]] <- NULL
       }
 
-      results[[i]] <- data
-    } else {
-      warning(sprintf("Request failed for FIPS %s (HTTP %d)", fips_code, resp_status(resp)))
-      results[[i]] <- NULL
-    }
+    }, error = function(e) {
+      warning(sprintf("Iteration %d (FIPS %s) failed with error: %s", i, fips_code, e$message))
+      results[[i]] <<- NULL
+    })
   }
+
 
   # combine all results into a single data frame
   combined <- bind_rows(results)
