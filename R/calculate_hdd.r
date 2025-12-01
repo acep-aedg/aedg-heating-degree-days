@@ -18,7 +18,7 @@ calculate_hdd <- function(
     filter(# drop cooling degree days (everything above 65F)
       hdd > 0) %>% 
     group_by(
-      community_fips_code, year) %>%
+      community_fips_code, year, yday) %>%
     summarize(
       hdd = round(sum(hdd), 0))
     
